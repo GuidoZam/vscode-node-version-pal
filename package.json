@@ -1,0 +1,90 @@
+{
+	"name": "vscode-node-version-pal",
+	"displayName": "Node Version Pal",
+	"description": "Shows the Node.js version from .nvmrc/.node-version files in the status bar with nvm/fnm integration",
+	"version": "0.0.1",
+	"publisher": "guidozam",
+	"license": "MIT",
+	"icon": "assets/icon.png",
+	"galleryBanner": {
+		"color": "#186968",
+		"theme": "light"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/GuidoZam/vscode-node-version-pal.git"
+	},
+	"bugs": {
+		"url": "https://github.com/GuidoZam/vscode-node-version-pal/issues"
+	},
+	"homepage": "https://github.com/GuidoZam/vscode-node-version-pal#readme",
+	"keywords": [
+		"nodejs",
+		"node",
+		"nvm",
+		"fnm",
+		"version",
+		"status bar",
+		"nvmrc",
+		"node-version"
+	],
+	"engines": {
+		"vscode": "^1.74.0",
+		"node": ">=18.0.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onStartupFinished"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "nodeVersionPal.refresh",
+				"title": "Refresh Node Version",
+				"category": "Node Version Pal"
+			},
+			{
+				"command": "nodeVersionPal.switchVersion",
+				"title": "Switch Node Version",
+				"category": "Node Version Pal"
+			},
+			{
+				"command": "nodeVersionPal.createVersionFile",
+				"title": "Create Node Version File",
+				"category": "Node Version Pal"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "npx tsc -p ./",
+		"watch": "npx tsc -watch -p ./",
+		"pretest": "npm run compile",
+		"lint": "npx eslint src --ext ts",
+		"test": "node ./out/test/runTest.js",
+		"test:ci": "xvfb-run -a node ./out/test/runTest.js",
+		"package": "vsce package",
+		"publish": "vsce publish"
+	},
+	"devDependencies": {
+		"@types/glob": "^8.1.0",
+		"@types/mocha": "^10.0.10",
+		"@types/node": "20.x",
+		"@types/semver": "^7.7.1",
+		"@types/vscode": "^1.74.0",
+		"@typescript-eslint/eslint-plugin": "^5.59.1",
+		"@typescript-eslint/parser": "^5.59.1",
+		"@vscode/test-electron": "^2.3.0",
+		"@vscode/vsce": "^3.7.1",
+		"eslint": "^8.39.0",
+		"glob": "^8.1.0",
+		"mocha": "^10.2.0",
+		"typescript": "^4.9.4"
+	},
+	"dependencies": {
+		"semver": "^7.5.4"
+	}
+}
