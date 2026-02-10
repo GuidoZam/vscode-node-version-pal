@@ -6,6 +6,7 @@
 	"publisher": "guidozam",
 	"license": "MIT",
 	"icon": "assets/icon.png",
+	"preview": false,
 	"galleryBanner": {
 		"theme": "light"
 	},
@@ -66,7 +67,10 @@
 		"test": "node ./out/test/runTest.js",
 		"test:ci": "xvfb-run -a node ./out/test/runTest.js",
 		"package": "vsce package",
-		"publish": "vsce publish"
+		"publish": "vsce publish",
+		"set-preview": "node scripts/set-preview.js",
+		"set-preview:true": "node scripts/set-preview.js true",
+		"set-preview:false": "node scripts/set-preview.js false"
 	},
 	"devDependencies": {
 		"@types/glob": "^8.1.0",
