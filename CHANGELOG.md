@@ -2,21 +2,7 @@
 
 All notable changes to the "Node Version Pal" extension will be documented in this file.
 
-## [Unreleased]
-
-### Added
-- **Create Version File** functionality when no `.nvmrc` or `.node-version` file exists
-  - Status bar shows "Create" button when no version files are found
-  - New `Create Version File` command in Command Palette
-  - Interactive workflow to choose file type (`.nvmrc` or `.node-version`)
-  - Version input validation with support for semantic versions, LTS, latest, etc.
-  - Multi-workspace support for file creation
-- Enhanced status bar behavior for better user experience
-
-### Fixed
-- Improved version validation to handle edge cases more gracefully
-
-## [0.0.1] - 2026-02-01
+## [0.0.1] - 2026-02-10
 
 ### Added
 - Initial release of Node Version Pal
