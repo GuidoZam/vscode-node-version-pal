@@ -66,8 +66,10 @@
 		"lint": "npx eslint src --ext ts",
 		"test": "node ./out/test/runTest.js",
 		"test:ci": "xvfb-run -a node ./out/test/runTest.js",
-		"package": "vsce package",
-		"publish": "vsce publish",
+		"vsce:package": "vsce package",
+		"vsce:package:prerelease": "vsce package --pre-release",
+		"vsce:publish": "vsce publish",
+		"vsce:publish:prerelease": "vsce publish --pre-release",
 		"set-preview": "node scripts/set-preview.js",
 		"set-preview:true": "node scripts/set-preview.js true",
 		"set-preview:false": "node scripts/set-preview.js false"
