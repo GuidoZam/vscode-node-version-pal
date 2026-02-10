@@ -4,6 +4,8 @@
 
 A Visual Studio Code extension that displays the Node.js version from `.nvmrc` or `.node-version` files in the status bar and allows easy switching between versions using nvm or fnm.
 
+[![Tests](https://github.com/GuidoZam/vscode-node-version-pal/actions/workflows/test.yml/badge.svg?branch=dev)](https://github.com/GuidoZam/vscode-node-version-pal/actions/workflows/test.yml)
+
 ## Features
 
 - 🔍 **Automatic Detection**: Automatically detects Node.js version from `.nvmrc` and `.node-version` files
