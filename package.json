@@ -2,7 +2,7 @@
 	"name": "vscode-node-version-pal",
 	"displayName": "Node Version Pal",
 	"description": "Shows the Node.js version from .nvmrc/.node-version files in the status bar with nvm/fnm integration",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "guidozam",
 	"license": "MIT",
 	"icon": "assets/icon.png",
