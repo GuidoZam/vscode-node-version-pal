@@ -16,3 +16,4 @@ coverage/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+vscode-node-version-pal-0.0.2.vsix

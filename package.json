@@ -2,12 +2,12 @@
 	"name": "vscode-node-version-pal",
 	"displayName": "Node Version Pal",
 	"description": "Shows the Node.js version from .nvmrc/.node-version files in the status bar with nvm/fnm integration",
-	"version": "0.0.1",
+	"version": "0.0.5",
 	"publisher": "guidozam",
 	"license": "MIT",
 	"icon": "assets/icon.png",
+	"preview": false,
 	"galleryBanner": {
-		"color": "#186968",
 		"theme": "light"
 	},
 	"repository": {
@@ -38,7 +38,7 @@
 	"activationEvents": [
 		"onStartupFinished"
 	],
-	"main": "./out/extension.js",
+	"main": "./dist/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -59,15 +59,21 @@
 		]
 	},
 	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "npx tsc -p ./",
-		"watch": "npx tsc -watch -p ./",
-		"pretest": "npm run compile",
+		"vscode:prepublish": "npm run package",
+		"compile": "webpack",
+		"watch": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"pretest": "npx tsc",
 		"lint": "npx eslint src --ext ts",
-		"test": "node ./out/test/runTest.js",
-		"test:ci": "xvfb-run -a node ./out/test/runTest.js",
-		"package": "vsce package",
-		"publish": "vsce publish"
+		"test": "npm run pretest && node ./out/test/runTest.js",
+		"test:ci": "npm run pretest && xvfb-run -a node ./out/test/runTest.js",
+		"vsce:package": "vsce package",
+		"vsce:package:prerelease": "vsce package --pre-release",
+		"vsce:publish": "vsce publish",
+		"vsce:publish:prerelease": "vsce publish --pre-release",
+		"set-preview": "node scripts/set-preview.js",
+		"set-preview:true": "node scripts/set-preview.js true",
+		"set-preview:false": "node scripts/set-preview.js false"
 	},
 	"devDependencies": {
 		"@types/glob": "^8.1.0",
@@ -82,7 +88,10 @@
 		"eslint": "^8.39.0",
 		"glob": "^8.1.0",
 		"mocha": "^10.2.0",
-		"typescript": "^4.9.4"
+		"ts-loader": "^9.5.4",
+		"typescript": "^4.9.4",
+		"webpack": "^5.105.2",
+		"webpack-cli": "^6.0.1"
 	},
 	"dependencies": {
 		"semver": "^7.5.4"

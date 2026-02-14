@@ -10,11 +10,11 @@ suite('Extension Test Suite', () => {
 	});
 
 	test('Extension should be present', () => {
-		assert.ok(vscode.extensions.getExtension('nodepal.vscode-node-version-pal'));
+		assert.ok(vscode.extensions.getExtension('guidozam.vscode-node-version-pal'));
 	});
 
 	test('Extension should activate', async () => {
-		const ext = vscode.extensions.getExtension('nodepal.vscode-node-version-pal');
+		const ext = vscode.extensions.getExtension('guidozam.vscode-node-version-pal');
 		await ext?.activate();
 		assert.ok(ext?.isActive);
 	});
