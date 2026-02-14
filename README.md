@@ -151,18 +151,7 @@ lts/hydrogen
 ## Known Issues
 
 - The extension relies on `.nvmrc` or `.node-version` files to detect Node versions
-- nvm integration on Windows is not supported (nvm doesn't run on Windows natively)
 - Version switching requires a terminal - the extension opens a terminal to execute commands
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit issues or pull requests.
-
-1. Fork the repository
-2. Create your feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
 
 ## Changelog
 
@@ -180,4 +169,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-Made with ❤️ for the Node.js community
+Made with ❤️ for developers
