@@ -220,8 +220,12 @@ export class NodeVersionProvider {
         } catch {
             // fnm not found, try nvm
             try {
-                // Check if nvm is available
-                await this.execAsync('source ~/.nvm/nvm.sh && nvm --version');
+                // Check if nvm is available - Windows nvm doesn't need sourcing
+                if (process.platform === 'win32') {
+                    await this.execAsync('nvm version');
+                } else {
+                    await this.execAsync('source ~/.nvm/nvm.sh && nvm --version');
+                }
                 return 'nvm';
             } catch {
                 return null;
@@ -239,7 +243,12 @@ export class NodeVersionProvider {
         if (manager === 'fnm') {
             command = `fnm use ${version}`;
         } else {
-            command = `source ~/.nvm/nvm.sh && nvm use ${version}`;
+            // Windows vs Unix/Linux nvm commands
+            if (process.platform === 'win32') {
+                command = `nvm use ${version}`;
+            } else {
+                command = `source ~/.nvm/nvm.sh && nvm use ${version}`;
+            }
         }
 
         terminal.sendText(command);
@@ -250,21 +259,59 @@ export class NodeVersionProvider {
 
     private async getCurrentNodeVersion(): Promise<string> {
         // Try multiple approaches to get current Node version
+        const isWindows = process.platform === 'win32';
+        
         const attempts = [
-            // Method 1: Standard node command with shell sourcing
-            () => this.execAsync('source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null || true; node --version'),
-            // Method 2: Direct node command
+            // Method 1: Direct node command (should work on all platforms)
             () => this.execAsync('node --version'),
-            // Method 3: Common installation paths
-            () => this.execAsync('/usr/local/bin/node --version'),
-            () => this.execAsync('/opt/homebrew/bin/node --version'),
-            // Method 4: Version manager commands
-            () => this.execAsync('source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null || true; fnm current 2>/dev/null || nvm current 2>/dev/null || node --version'),
-            // Method 5: Which node then version
+            
+            // Method 2: Platform-specific shell sourcing or direct command
+            () => {
+                if (isWindows) {
+                    return this.execAsync('node --version');
+                } else {
+                    return this.execAsync('source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null || true; node --version');
+                }
+            },
+            
+            // Method 3: Common installation paths (platform-specific)
+            () => {
+                if (isWindows) {
+                    return this.execAsync('node --version'); // Windows node should be in PATH
+                } else {
+                    return this.execAsync('/usr/local/bin/node --version');
+                }
+            },
+            
+            () => {
+                if (!isWindows) {
+                    return this.execAsync('/opt/homebrew/bin/node --version');
+                }
+                throw new Error('Not applicable on Windows');
+            },
+            
+            // Method 4: Version manager commands (platform-specific)
+            () => {
+                if (isWindows) {
+                    return this.execAsync('nvm current 2>nul || fnm current 2>nul || node --version');
+                } else {
+                    return this.execAsync('source ~/.zshrc 2>/dev/null || source ~/.bashrc 2>/dev/null || true; fnm current 2>/dev/null || nvm current 2>/dev/null || node --version');
+                }
+            },
+            
+            // Method 5: Which/Where node then version (platform-specific)
             async () => {
-                const nodePath = await this.execAsync('which node 2>/dev/null || echo ""');
+                let nodePath: string;
+                if (isWindows) {
+                    nodePath = await this.execAsync('where node 2>nul || echo ""');
+                } else {
+                    nodePath = await this.execAsync('which node 2>/dev/null || echo ""');
+                }
+                
                 if (nodePath.trim()) {
-                    return this.execAsync(`${nodePath.trim()} --version`);
+                    // On Windows, 'where' might return multiple paths, take the first one
+                    const firstPath = nodePath.split('\n')[0].trim();
+                    return this.execAsync(`"${firstPath}" --version`);
                 }
                 throw new Error('Node not found in PATH');
             }
@@ -273,7 +320,7 @@ export class NodeVersionProvider {
         for (const attempt of attempts) {
             try {
                 const result = await attempt();
-                if (result && result.trim() && !result.includes('command not found')) {
+                if (result && result.trim() && !result.includes('command not found') && !result.includes('not recognized')) {
                     const version = result.replace(/^v/, '').trim();
                     // Validate it looks like a version number
                     if (/^\d+\.\d+\.\d+/.test(version)) {
@@ -291,10 +338,25 @@ export class NodeVersionProvider {
     private async execAsync(command: string): Promise<string> {
         return new Promise((resolve, reject) => {
             // Enhanced environment setup to include common paths where Node might be installed
-            const env = { 
-                ...process.env,
-                PATH: `${process.env.PATH}:/usr/local/bin:/opt/homebrew/bin:/Users/${process.env.USER}/.nvm/versions/node:/Users/${process.env.USER}/.fnm/node-versions`
-            };
+            let env = { ...process.env };
+            
+            if (process.platform === 'win32') {
+                // Windows-specific paths for npm global modules and common Node installations
+                const additionalPaths = [
+                    `${process.env.APPDATA}\\npm`,
+                    `${process.env.PROGRAMFILES}\\nodejs`,
+                    `${process.env['PROGRAMFILES(X86)']}\\nodejs`,
+                    `${process.env.USERPROFILE}\\AppData\\Roaming\\nvm`,
+                    `${process.env.USERPROFILE}\\.nvm\\versions\\node`,
+                    `${process.env.USERPROFILE}\\scoop\\apps\\nodejs`,
+                    `${process.env.USERPROFILE}\\.fnm\\node-versions`
+                ].filter(Boolean); // Remove any undefined paths
+                
+                env.PATH = `${process.env.PATH};${additionalPaths.join(';')}`;
+            } else {
+                // Unix/Linux/macOS paths
+                env.PATH = `${process.env.PATH}:/usr/local/bin:/opt/homebrew/bin:/Users/${process.env.USER}/.nvm/versions/node:/Users/${process.env.USER}/.fnm/node-versions`;
+            }
             
             cp.exec(command, { 
                 env: env,
