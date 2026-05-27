@@ -24,10 +24,19 @@ export class NodeVersionProvider {
         this.setupFileWatcher();
 
         // Listen to workspace folder changes
-        vscode.workspace.onDidChangeWorkspaceFolders(() => {
+        const workspaceFolderListener = vscode.workspace.onDidChangeWorkspaceFolders(() => {
             this.setupFileWatcher();
             this.updateVersion();
         });
+        this.context.subscriptions.push(workspaceFolderListener);
+
+        // Listen to configuration changes
+        const configListener = vscode.workspace.onDidChangeConfiguration(event => {
+            if (event.affectsConfiguration('nodeVersionPal.statusBarDisplayMode')) {
+                this.updateVersion();
+            }
+        });
+        this.context.subscriptions.push(configListener);
     }
 
     private setupFileWatcher() {
@@ -58,7 +67,17 @@ export class NodeVersionProvider {
             this.currentVersion = nodeInfo.version;
             this.currentProject = nodeInfo.projectName;
             
-            this.statusBarItem.text = `$(nodejs) Node ${nodeInfo.version}`;
+            // Get the display mode configuration
+            const config = vscode.workspace.getConfiguration('nodeVersionPal');
+            const displayMode = config.get<string>('statusBarDisplayMode', 'full');
+            
+            // Set text based on display mode
+            if (displayMode === 'minimal') {
+                this.statusBarItem.text = `$(repl)`;
+            } else {
+                this.statusBarItem.text = `$(repl) Node ${nodeInfo.version}`;
+            }
+            
             this.statusBarItem.tooltip = `Node.js v${nodeInfo.version}\nProject: ${nodeInfo.projectName}${nodeInfo.relativePath ? `\nLocation: ${nodeInfo.relativePath}` : ''}\nClick to switch version`;
             this.statusBarItem.command = 'nodeVersionPal.switchVersion';
             this.statusBarItem.show();
@@ -68,7 +87,16 @@ export class NodeVersionProvider {
             
             // Show "Create" button when no version file exists
             if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
-                this.statusBarItem.text = `$(file-add) Create Node Version`;
+                // Get the display mode configuration for create button too
+                const config = vscode.workspace.getConfiguration('nodeVersionPal');
+                const displayMode = config.get<string>('statusBarDisplayMode', 'full');
+                
+                if (displayMode === 'minimal') {
+                    this.statusBarItem.text = `$(file-add)`;
+                } else {
+                    this.statusBarItem.text = `$(file-add) Create Node Version`;
+                }
+                
                 this.statusBarItem.tooltip = 'Click to create .nvmrc or .node-version file';
                 this.statusBarItem.command = 'nodeVersionPal.createVersionFile';
                 this.statusBarItem.show();

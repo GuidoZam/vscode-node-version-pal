@@ -2,7 +2,7 @@
 	"name": "vscode-node-version-pal",
 	"displayName": "Node Version Pal",
 	"description": "Shows the Node.js version from .nvmrc/.node-version files in the status bar with nvm/fnm integration",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"publisher": "guidozam",
 	"license": "MIT",
 	"icon": "assets/icon.png",
@@ -56,7 +56,22 @@
 				"title": "Create Node Version File",
 				"category": "Node Version Pal"
 			}
-		]
+		],
+		"configuration": {
+			"title": "Node Version Pal",
+			"properties": {
+				"nodeVersionPal.statusBarDisplayMode": {
+					"type": "string",
+					"enum": ["full", "minimal"],
+					"default": "full",
+					"description": "Controls how the Node version is displayed in the status bar",
+					"enumDescriptions": [
+						"Show icon and text (e.g., '$(repl) Node 18.17.0')",
+						"Show icon only (e.g., '$(repl)')"
+					]
+				}
+			}
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run package",
