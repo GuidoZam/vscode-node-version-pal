@@ -2,6 +2,13 @@
 
 All notable changes to the "Node Version Pal" extension will be documented in this file.
 
+## [0.0.7] - 2026-05-27
+
+### Fixed
+- Fixed configuration change listener not being properly registered, preventing status bar from updating when display mode setting changed
+- Fixed workspace folder change listener not being properly registered in subscriptions
+- Added missing icon (`$(repl)`) to status bar display in both minimal and full modes to match package.json description
+
 ## [0.0.1] - 2026-02-10
 
 ### Added
